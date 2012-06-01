@@ -771,6 +771,13 @@ create_table(:x) do
   Integer :c70
   Integer :c71
   Integer :c72
+  
+  check {c64 >= 0}
+  check {c65 >= 0}
+  check {c66 >= 0}
+  check {c67 >= 0}
+  check {c68 >= 0}
+  check {c69 >= 0}
 end
 END_MIG
   end
