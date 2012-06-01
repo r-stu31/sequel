@@ -139,6 +139,9 @@ END_MIG
           gen.foreign_key(name, table, col_opts)
         else
           gen.column(name, type, col_opts)
+          if (type == Integer || type == Bignum) && schema[:db_type] =~ / unsigned\z/io
+            gen.check("{#{name} >= 0}".lit)
+          end
         end
       end
     end
@@ -425,6 +428,8 @@ END_MIG
             name = c.delete(:name)
             if !name and c[:check].length == 1 and c[:check].first.is_a?(Hash)
               "check #{c[:check].first.inspect[1...-1]}"
+            elsif !name and c[:check].length == 1 and c[:check].first.is_a?(Sequel::LiteralString)
+              "check #{c[:check].first}"
             else
               "#{name ? "constraint #{name.inspect}," : 'check'} #{c[:check].map{|x| x.inspect}.join(', ')}"
             end
